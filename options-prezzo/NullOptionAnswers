@@ -1,0 +1,114 @@
+def mkTrafficLightOrNull(str: String): TrafficLight =
+    str match {
+        case "red" => Red
+        case "yellow" => Yellow
+        case "green" => Green
+        case _ => null
+    }
+
+// NOTE: Are there any other cases? There are only 3 possible traffic lights.
+// What about the null case??
+// Check if it compiles first!
+// Run the tests without null check.
+
+def mkTrafficLightOrNullThenShow(str: String): String = {
+    mkTrafficLightOrNull(str) match {
+      case Red => "Traffic light is red"
+      case Yellow => "Traffic light is yellow"
+      case Green => "Traffic light is green"
+      case _ => "Traffic light is invalid"
+    }
+  }
+
+def mkPersonOrNull(name: String, age: Int): Person = {
+    if (name.isEmpty || age < 0) null
+    else Person(name, age)
+  }
+
+
+// Note: Ask what will happen if we don't do a `null` check?
+// Run the test - Null pointer exception, why?
+def mkPersonOrNullThenChangeName(oldName: String, age: Int, newName: String): Person = {
+    val p: Person = mkPersonOrNull(oldName, age)
+    if (newName.isEmpty) null
+    else if (p == null) null
+    else changeName(newName, p)
+  }
+
+def changeName(newName: String, person: Person): Person = person.copy(name = newName)
+
+// What do you think will happen if we pass in an empty list?
+// We don't know what the return type is so we can't be sure of what our code is doing.
+def mean(nums: List[Int]): Double = nums.sum / (nums.length.toDouble)
+
+// OPTION
+
+// breaks everything -> debugging is painful.
+// We want clean code that is easy to debug and fix when problem arise.
+
+// Actual type is Option and you can think of Some and None as constructors for it.
+
+// Some represents that something exists
+// None is the absence of it, and a better way of representing null as a value.
+
+// Option is used when there is a possibility of something being null.
+
+def safeMean(nums: List[Int]): Option[Double] = {
+    if (nums.isEmpty) None
+    else Some((nums.sum.toDouble / nums.length))
+  }
+
+def mkTrafficLight(str: String): Option[TrafficLight] = str match {
+    case "red" => Some(Red)
+    case "yellow" => Some(Yellow)
+    case "green" => Some(Green)
+    case  _ => None
+  }
+
+def mkTrafficLightThenShow(str: String): String = {
+    val maybeLight: Option[TrafficLight] = mkTrafficLight((str))
+    maybeLight match {
+      case Some(Red) => "Traffic light is red"
+      case Some(Yellow) => "Traffic light is yellow"
+      case Some(Green) => "Traffic light is green"
+      case None => s"Traffic light `$str` is invalid"
+    }
+  }
+
+def mkPerson(name: String, age: Int): Option[Person] = {
+    if (name.isEmpty) {
+      None
+    } else if (age < 0) {
+      None
+    } else {
+      Some(Person(name, age))
+    }
+  }
+
+def mkPersonThenChangeName(oldName: String, age: Int, newName: String): Option[Person] = {
+    val maybePerson = mkPerson(oldName, age)
+    maybePerson match {
+      case Some(person) => mkPerson(newName, person.age)
+      case None => None
+    }
+  }
+
+  def findHumanById(humanId: HumanId): Option[Human] = {
+    humansDatabase.get(humanId)
+  }
+
+  def findJobById(jobId: JobId): Option[Job] = {
+    jobsDatabase.get(jobId)
+  }
+
+   def findJobDescriptionGivenJobId1(jobId: JobId): Option[String] = {
+    val maybeJob: Option[Job] = findJobById(jobId)
+    maybeJob match {
+      case Some(job) => Some(job.description)
+      case None => None
+    }
+  }
+
+  def findJobDescriptionGivenJobId2(jobId: JobId): Option[String] = {
+    findJobById(jobId).map(_.description)
+  }
