@@ -36,7 +36,7 @@ Jason Derulo? 😅
 ## What is Circe
 
 - JSON Library for Scala
-- We can see how it is referenced in the `applied-scala` project by looking at the `build.sbt` file
+- We can see how it is used in the `applied-scala` project by looking at the `build.sbt` file
 - 👉 [Docs](https://circe.github.io/circe/)
 
 ---
@@ -44,7 +44,7 @@ Jason Derulo? 😅
 ## Why do we need it?
 
 - _Functional_ AND _type-safe_
-- Works well with the `cats` ecosystem
+- Works well with `cats` ecosystem
 
 ---
 
@@ -66,6 +66,7 @@ Jason Derulo? 😅
 ## Part 1: Parsing JSON
 
 - Think about the return type on the first exercise
+- Can any string be parsed into valid JSON?
 
 ---
 
@@ -91,10 +92,10 @@ There are 3 different ways of how _implicits_ are defined in Scala
 ```
 1. Defined in local scope, e.g. within an object or file
 2. Defined in an import
-3. Defined in global scope
+3. Defined on a companion object
 ```
 
-Let's take a closer look at `asJson` now
+Let's take a closer look at how `encodePerson` works
 
 ---
 
@@ -112,11 +113,11 @@ Let's take a closer look at `asJson` now
 
 ## Cardinality in 10 seconds ⏱
 
-- In our exercise we are taking a JSON object and constructing it into a Person
+- In our exercise we are going to take a JSON object and construct it into a Person
 - Can anyone see why this may not work for every JSON?
 
 - There is no guarantee that we can convert every JSON string or object to a Person
-- That is why we are using an `Either` in `decodePerson()`
+- That is why we are returning an `Either` in `decodePerson()`
 
 ---
 

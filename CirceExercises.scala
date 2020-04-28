@@ -25,7 +25,7 @@ object CirceExercises {
     */
 
   /**
-    * Why is the return type an `Either`?
+    * Why is the return type an `Either`? => not all string can be parsed to valid Json
     * We know an Either has 2 type holes, the left side returns an error and right returns some type
     * DOCS: https://github.com/circe/circe/blob/master/modules/parser/jvm/src/main/scala/io/circe/parser/package.scala
     */
@@ -81,6 +81,8 @@ object CirceExercises {
   }
   //  remove comma, raises an exception (invocation target)...caused by parse exception
 
+  // BEFORE we head into 2nd exercises, let's talk about Encoding Json (switch to slides)
+
   /**
     * Create an `Encoder` instance for `Person` by implementing the `apply` method below.
     *
@@ -93,8 +95,7 @@ object CirceExercises {
     }
     person.asJson(personEncoder)
 //    OR
-//    person.asJson
-//    if we make personEncoder implicit, so asJson can accept an implicit encoder
+//    person.asJson if we make personEncoder implicit, because asJson accepts an implicit encoder
 //    as we have seen previously, it goes looking in local scope
 //    it finds an encoder for Person object and uses that
 
