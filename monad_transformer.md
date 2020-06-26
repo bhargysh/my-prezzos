@@ -57,7 +57,7 @@ _cool GIF while I bring up IntelliJ_
 
 - There is also EitherT for nested Either Monad
 - _And then there is Kleisli_ 😱 which is more sophisticated than `OptionT` and `EitherT` (for another day)
-- If you want to read more about what we covered today _or_ Kleisli, go to the Cats [docs](https://typelevel.org/cats/datatypes.html)
+- If you want to read more about what we covered today _or_ Kleisli, go to the Cats [docs](https://typelevel.org/cats/datatypes.html) or this [awesome] blog(https://blog.buildo.io/monad-transformers-for-the-working-programmer-aa7e981190e7)
 
 ---
 
