@@ -17,16 +17,16 @@
 
 ## Side effects pose some challenges 🧗🏽‍♀️
 
-- Referentially transparent?
-- When can they run?
-- How do they run? i.e. sequential or parallel
-- Be treated as values?
+- Are side effects referentially transparent?
+- When can we run them?
+- How can we run them? i.e. sequential or parallel
+- Can they be treated as values?
 
 ---
 
 ## Oh hey, I know
 
-We can do that with the the 😸s Effect `IO`
+We can _all_ do that with 😸s Effect `IO`
 
 ---
 
@@ -34,20 +34,27 @@ We can do that with the the 😸s Effect `IO`
 
 `IO[A]`
 
-- when evaluated, it performs an effect and returns value of type `A`
+When evaluated, it performs an effect and returns value of type `A`
 
 ---
 
 ## Constructing an IO
 
 ```
-IO(side effect) OR IO.apply(side effect)
+IO(*side effect*) OR
+IO.apply(*side effect*)
 ```
+
+---
+
+## Let's compare
 
 ```
 println("🍕")       => 🍕
 IO(println("🌮"))   =>
 ```
+
+🥴 🥴 🥴 🥴 🥴 🥴 🥴 🥴 🥴
 
 ---
 
@@ -55,25 +62,8 @@ IO(println("🌮"))   =>
 
 - `IO` represents a _description_ of a side effectful computation
 
----
-
-## IO.pure
-
-- We can also construct an IO using `.pure` _however_, we should only use this for constants that we know are pure values
-
 ```
-IO.pure(4)          <!-- nothing is executed -->
-IO.pure("hello")    <!-- nothing is executed -->
-```
-
----
-
-## Why is it bad
-- IO.pure is eagerly evaluated, does not suspend side effects
-- `println` will be triggered immediately and this is probably not our intention
-
-```
-IO.pure(println("WRONG 🙅‍♀️"))
+def apply[A](body: => A): IO[A] = delay(body) *lazy evaluation*
 ```
 
 ---
@@ -90,6 +80,38 @@ object Main extends IOApp <!-- We'll see an example of this in the project -->
 ```
 
 ![](io_cake.png)
+
+---
+
+## Another construction of IO
+
+- `IO.pure`
+- This construction of IO should only be used for constants that we know are pure values
+
+```
+IO.pure(4)          <!-- nothing is executed -->
+IO.pure("hello")    <!-- nothing is executed -->
+```
+
+---
+
+## When not to use it
+
+- IO.pure is _eagerly_ evaluated so it does not __suspend__ side effects
+- `println` will be triggered immediately and this is probably not our intention
+
+```
+IO.pure(println("WRONG 🙅‍♀️"))
+```
+
+```
+def pure[A](a: A): IO[A] *eager evaluation*
+```
+
+---
+
+## Questions? 🌈
+
 ---
 
 ## What can we do with IO?
@@ -97,8 +119,16 @@ object Main extends IOApp <!-- We'll see an example of this in the project -->
 Transform from `IO[A]` to `IO[B]`
 
 ```
-IO[A] + (A => B) = IO[B] // looks familiar 🤔
+IO[A] + (A => B) = IO[B]
 ```
+
+Looks Familiar 🤔
+
+---
+
+## What can we do with IO?
+
+Transform from `IO[A]` to `IO[B]`
 
 ```
 IO[A].map(A => B) = IO[B]
@@ -130,7 +160,21 @@ IO[A].flatMap(A => IO[B]) = IO[B]
 ```
 IO(25).flatMap(n => IO(println(s"Number is: $n")))
 
-A: Int, Int => IO[Unit]
+<!-- A: Int, Int => IO[Unit] = IO[Unit] -->
+```
+
+---
+
+## flatMap with IO
+
+```
+val ioA: IO[Int] = IO(4)
+val newIO: IO[String] = for {
+    number <- ioA
+    string <- IO(s"hello $number")
+} yield string
+
+newIO.unsafeRunSync() = "hello 4"
 ```
 
 ---
@@ -153,23 +197,9 @@ launchcode.flatMap(code => launchTheNukes(code))
 
 ---
 
-## flatMap with IO
-
-```
-val ioA: IO[Int] = IO(4)
-val newIO: IO[String] = for {
-    number <- ioA
-    string <- IO(s"hello $number")
-} yield string
-
-newIO.unsafeRunSync() = "hello 4"
-```
-
----
-
 ## Referential Transparency
 
-An expression is referentially transparent if it can be replaced with its value without changing the program’s behavior.
+An expression is referentially transparent if it can be replaced with its value without changing the program’s _behavior_.
 
 ---
 
@@ -187,32 +217,44 @@ val b = println("🥯")   b = a
 ```
 
 ---
-## 🙅‍♀️
+## 🙅‍♀️ 🙅‍♂️
 ---
 
 ## What about this?
 
 ```
-val a = println("🥯")               val a = println("🥯")
-val b = println("🥯")               b = a
+val a = IO(println("🍕"))           val a = IO(println("🍕"))
+val b = IO(println("🍕"))           b = a
 
 a.flatMap(_ => b).unsafeRunSync()   a.flatMap(_ => b).unsafeRunSync()
 ```
 
 ```
 // Output                           Output
-🥯                                  🥯
-🥯                                  🥯
+🍕                                  🍕
+🍕                                  🍕
 ```
 
 ---
-## ✅
+## ✅ 🎉
+---
+
+## Questions 🤚
+
+---
+
+## Side effects _may_ succeed 🤷‍♀️
+
+- How does IO handle side effects that may not succeed?
+
 ---
 
 ## Signal failures
 
 ```
 IO.raiseError(new Exception(???))
+
+def raiseError[A](e: Throwable): IO[A]
 ```
 ---
 
@@ -221,11 +263,14 @@ IO.raiseError(new Exception(???))
 ```
 IO.attempt
 
-IO[A] => IO[Either[Throwable, A]]
+def attempt: IO[Either[Throwable, A]]
 ```
+---
+
+## Example 🤓
 
 ```
-val io = IO[Result] = // side effect
+val io = IO[Result] = // some side effect
 
 io.attempt.map {
     case Right => // handle success
@@ -239,10 +284,15 @@ io.attempt.map {
 
 - `Future[A]` in Scala is like Promise in JS land
 - Some problems with Future:
-    - runs upon construction, eagerly evaluated
-    - It needs an `ExecutionContext` (a thread pool) each time it is constructed
+    - runs upon construction
     - Not referentially transparent
     - Not descriptive
+    - It requires an `ExecutionContext` (a thread pool) upon construction
+
+---
+
+## Is IO the Future? 🤖
+_It is one of the better / best options to work with side effects_
 
 ---
 
@@ -251,5 +301,9 @@ io.attempt.map {
 ---
 
 ## Resources
-- 🐱s docs https://typelevel.org/cats-effect/datatypes/io.html
-- Very interesting Reddit discussion https://www.reddit.com/r/scala/comments/8ygjcq/can_someone_explain_to_me_the_benefits_of_io/
+- 🐱s [docs](https://typelevel.org/cats-effect/datatypes/io.html)
+- Very detailed and interesting Reddit [discussion](https://www.reddit.com/r/scala/comments/8ygjcq/can_someone_explain_to_me_the_benefits_of_io/) on the benefits of IO
+
+---
+
+## Exercise time 🏃‍♀️ 🏃‍♂️
