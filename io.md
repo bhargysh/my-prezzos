@@ -55,7 +55,26 @@ IO(println("🌮"))   =>
 
 - `IO` represents a _description_ of a side effectful computation
 
-![](io_cake.png)
+---
+
+## IO.pure
+
+- We can also construct an IO using `.pure` _however_, we should only use this for constants that we know are pure values
+
+```
+IO.pure(4)          <!-- nothing is executed -->
+IO.pure("hello")    <!-- nothing is executed -->
+```
+
+---
+
+## Why is it bad
+- IO.pure is eagerly evaluated, does not suspend side effects
+- `println` will be triggered immediately and this is probably not our intention
+
+```
+IO.pure(println("WRONG 🙅‍♀️"))
+```
 
 ---
 
@@ -66,12 +85,11 @@ val ioA: IO[Unit] = IO(println("🥨"))
 ioA.unsafeRunSync => A
 ```
 
-OR (preferably)
+```
+object Main extends IOApp <!-- We'll see an example of this in the project -->
+```
 
-```
-object Main extends IOApp
-```
-We'll see an example of this in the project
+![](io_cake.png)
 ---
 
 ## What can we do with IO?
@@ -159,7 +177,7 @@ An expression is referentially transparent if it can be replaced with its value 
 
 ```
 val a = println("🥯")   val a = println("🥯")
-val a = println("🥯")   b = a
+val b = println("🥯")   b = a
 ```
 
 ```
@@ -176,7 +194,7 @@ val a = println("🥯")   b = a
 
 ```
 val a = println("🥯")               val a = println("🥯")
-val a = println("🥯")               b = a
+val b = println("🥯")               b = a
 
 a.flatMap(_ => b).unsafeRunSync()   a.flatMap(_ => b).unsafeRunSync()
 ```
@@ -217,18 +235,21 @@ io.attempt.map {
 
 ---
 
-## Questions?
+## Is IO the Future? 🤖
+
+- `Future[A]` in Scala is like Promise in JS land
+- Some problems with Future:
+    - runs upon construction, eagerly evaluated
+    - It needs an `ExecutionContext` (a thread pool) each time it is constructed
+    - Not referentially transparent
+    - Not descriptive
+
+---
+
+## Questions? 🧠
 
 ---
 
 ## Resources
 - 🐱s docs https://typelevel.org/cats-effect/datatypes/io.html
 - Very interesting Reddit discussion https://www.reddit.com/r/scala/comments/8ygjcq/can_someone_explain_to_me_the_benefits_of_io/
-
----
-
-Things left to talk about
-
-- IO.pure
-- Futue vs IO
-- Lazy evaluation
