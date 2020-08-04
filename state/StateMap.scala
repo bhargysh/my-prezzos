@@ -16,7 +16,7 @@ case class FruitInventory(currentInventory: Map[Fruit, Int]) {
     val fruitcount = currentInventory.get(key).map(maybeInt => maybeInt - 1).get
     State.modify(mapOfFruits => mapOfFruits.+((key, fruitcount)))
   }
-  def now() = State.get[Inventory[Unit]]
+  def now(f: Map[Fruit, Int] => Map[Fruit, Int]) = State.inspect[Map[Fruit, Int], Map[Fruit, Int]](f)
   def performTotalStockCount(): Int = currentInventory.values.sum
 }
 
@@ -33,5 +33,5 @@ val program = for {
   _ <- inventory.add(Orange)
 } yield ()
 
-program.run(inventory.currentInventory).value
-println(inventory.now().run(???).value)
+val programState: (Map[Fruit, Int], Unit) = program.run(inventory.currentInventory).value
+val (oldState, newState) = inventory.now(_ => programState._1).run(inventory.currentInventory).value
