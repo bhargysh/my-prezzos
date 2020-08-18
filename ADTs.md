@@ -252,3 +252,17 @@ case class Other(colourStr: String) extends EyeColour
 ---
 
 ## Questions
+
+---
+
+## ADTs vs ADTs 🥊
+
+- Abstract Data Types vs Algebraic Data Types...not the same
+- e.g. `List`, `Map`, `Set`, `Queue`, `Stack`
+- ![AbtractDTs](https://medium.com/javascript-scene/abstract-data-types-and-the-software-crisis-671ea7fc72e7) define data types only in terms of their operations, and the axioms to which those operations must adhere
+- The exhaustive list of all possible Abstract Data Types is _infinite_ ♾
+- AbstractDTs perform a set of operations over unspecified data, _not a specific set of concrete data types_
+
+---
+
+![tired dog](https://media3.giphy.com/media/1j8P1JhBOiq7ZXtkqr/giphy.gif)
