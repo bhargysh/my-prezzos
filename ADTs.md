@@ -2,7 +2,7 @@
 
 ---
 
-## (My) Definition
+## Unofficial Definition
 
 - ADTs are a way of _categorizing_ code
 
@@ -10,9 +10,10 @@
 
 ## ADTs in Scala
 
-From Ol' Alvin Alexander:
+From Alvin Alexander:
 
 If you create your data models using
+
 - case classes with immutable fields and
 - case objects, and
 - those data types have no methods, you’re already writing ADTs.
@@ -40,6 +41,7 @@ case object Blue extends EyeColour
 case object Green extends EyeColour
 case object Hazel extends EyeColour
 ```
+
 ---
 
 ## Let's unpack it
@@ -55,11 +57,12 @@ case object Blue extends EyeColour
 case object Green extends EyeColour
 case object Hazel extends EyeColour
 ```
+
 ---
 
 ## Okay nothing fancy going on...yet
 
-![]()
+![ninja](https://media3.giphy.com/media/3ohhwtQGinneVw1FLy/giphy.gif)
 
 ---
 
@@ -75,8 +78,8 @@ case object Hazel extends EyeColour
 
 - Sum types are typically created with a `sealed trait` as the base type, with instances created via `case object`s
 - **We** define all possible instances of the base type
-- Can use the phrases “is a” & “or” when talking about Sum types
-- e.g. `Green` is a type of `EyeColour`, and `EyeColour` is a `Green` or a `Brown`...
+- Can use the phrases “is a” / “or” when talking about Sum types
+- e.g. `Green` is a type of `EyeColour`, and `EyeColour` is a `Green` or a `Brown`
 
 ---
 
@@ -101,7 +104,7 @@ case object Hazel extends EyeColour
 
 ## I have some 🙋🏾‍♀️
 
-- Why is a `sealed trait` to define the base type?
+- Why is a `sealed trait` used to define the base type?
 - Why is a `case object` used?
 
 ---
@@ -127,9 +130,9 @@ case object Hazel extends EyeColour
 
 ## Product type
 
-- what it sounds like
-- use case class constructor to create a data type whose number of possible concrete instances can be calculated by multiplying the number of possibilities of all of its constructor fields.
-- in the example below: each parameter has 2 possibilities -> 2 * 2 = 4 possible instances
+- use case a class constructor to create a data type
+- calculate the number of possible concrete instances by multiplying the number of possibilities of all of its constructor fields.
+- in the example below: each parameter has 2 possibilities -> 2 \* 2 = 4 possible instances
 
 ```
 sealed trait Bool
@@ -159,8 +162,92 @@ case class Person (
 
 ---
 
-## Pattern matching
+## Questions?
 
+--
+
+## Pattern matching ⭐️
+
+```
+def describeEyeColour(colour: EyeColour): String = colour match {
+    case Brown => "Brown"
+    case Black => "Black"
+    case Blue => "Blue"
+    case Green => "Green"
+    case Hazel => "Hazel"
+  }
+
+```
+
+---
+
+## New Eye Colour?
+
+- Let's imagine the `EyeColour` ADT is used by Department of Foreign Affairs for identifying eye colour from passport photos
+- They discover that users are inputting grey as an eye colour more often
+- How can we model this?
+
+---
+
+## One way
+
+```
+case class Eye(colour: EyeColour)
+
+sealed trait EyeColour
+
+case object Brown extends EyeColour
+case object Black extends EyeColour
+...
+case object Grey extends EyeColour
+```
+
+---
+
+## Another way
+
+```
+case class Eye(colour: EyeColour)
+
+sealed trait EyeColour
+
+case object Brown extends EyeColour
+case object Black extends EyeColour
+...
+case class Other(colourStr: String) extends EyeColour
+```
+
+---
+
+## Effects of adding a data type
+
+- What will happen if we try to compile and run `describeEyeColour`?
+
+---
+
+## Not Exhaustive
+
+![](https://git.realestate.com.au/scala-course/intro-slides/raw/master/algebraic-data-types/Jack/blue.png)
+
+- How does this help us?
+
+---
+
+## Saviour in disguise 🕵️‍♀️
+
+- If your app is dealing with `EyeColour` in 10 places, you get 10 compilation errors
+- Forced to fix them, otherwise your program will not compile
+- Super powerful, less 🐛🐛🐛
+
+---
+
+## The world we live in 🥴
+
+![](https://git.realestate.com.au/scala-course/intro-slides/raw/master/algebraic-data-types/Jack/purity.png)
+
+- Outer ring interacts with HTTP requests, user input, database calls
+- We create a validation layer to turn them into valid data by using ADTs.
+- Inner ring is where we do the business logic and use the clean data ✨
 
 ---
 
