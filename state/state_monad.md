@@ -44,7 +44,7 @@
 
 - `+` a new map with the new binding added to this map
 - each new inventory represents a snapshot of what is happening in our inventory, i.e it maintains a history of the inventory
-- however, not the most elegant looking code 🤷‍♀️
+- however, not the most elegant looking code & is it easily testable? 🤷‍♀️
 
 ---
 
@@ -81,7 +81,7 @@ type State[S, A] = StateT[Eval, S, A]
 ## Short digresssion to Eval
 
 - a monad that controls evaluation
-- wraps a value or computation `Eval[+A]`
+- wraps a value `Eval[+A]`
 - the `.value` method gets the result, `A`
 - Eval has 3 different ways evaluating strategies:
   - Now -> evaluated immediately
