@@ -1,5 +1,5 @@
 # Law Testing in Scala 👩🏽‍⚖️
-
+![judge](https://media4.giphy.com/media/2siBCzFMNsySRMJfuM/giphy.gif)
 
 ## A simple test
 
@@ -27,7 +27,7 @@
 
 ## A to B ↔ B to A
 
-![](encode_decode.jpg)
+![Encode decode](encode_decode.jpg)
 
 ## Optimised test 💡
 
@@ -40,7 +40,10 @@ def roundTripEncodeAndDecodeDealId =
 
 - For every `dealId`, if we decode and encode it, we should get back the same `dealId`
 - some implicit magic going on with `Arbitrary[DealId]`
-- property == law?
+
+## There's more 🌈
+
+![PR feedback](PR_feedback_codec_tests.png)
 
 ## Even more optimised test 🤓
 
@@ -78,7 +81,7 @@ final class IsEqArrow[A](private val lhs: A) {
     implicit def <->(rhs: A): IsEq[A] = IsEq(lhs, rhs)
 }
 ```
-<!-- TODO: add explanation for extension method -->
+<!-- TODO: add explanation for extension methods -->
 
 ## Resources
 
