@@ -50,21 +50,35 @@ object MainSafe extends IOApp {
 
 1. `args` passed in as a `List` not an `Array`
 2. We use an `ExitCode` to specify success or an error code
+3. Some built in magic 🔮
 
 ---
 
-## How does it work
+## How it works
 
 - if the program returns an `ExitCode.Success`, the main method exits and shutdown is handled by `IOApp`
-- if completed with an exit code != 0, app exits with that as the error code
-- if the IO terminates in error, it is printed to standard error and `sys.exit` is called
+- Let's have a look at what that means 👀
 
 ---
 
-## Is there a FApp?
+## How it works cont...
 
-- `IOApp` doesn’t have an `F[_]` parameter, unlike the other data types
+- if program completes with an exit code `!= 0` the program exits with that as the error code
+- if the `IO` terminates in error, it is printed to standard error and `sys.exit` is called
+
+---
+
+## Is there a F[App]?
+
+- `IOApp` doesn’t have an `F[_]` parameter unlike the other data types
 - Different `F[_]` data types have different requirements for evaluation at the end of the world
-- Monix’s `Task` comes with its own `TaskApp`
 - 💡 `IOApp` can be used for any `F[_]`
     - Any `Effect` or `ConcurrentEffect` can be converted to `IO`
+
+---
+
+## Some real examples
+
+- Using `unsafeRunSync` 👉 [examples](https://git.realestate.com.au/search?q=unsaferunsync+filename%3AMain.scala+language%3AScala+language%3AScala&type=Code&ref=advsearch&l=Scala&l=Scala)
+- Using `IOApp` 👉 [example](https://github.com/realestate-com-au/applied-scala/blob/master/src/main/scala/com/reagroup/appliedscala/Main.scala)
+- _Not_ using `unsafeRunSync` or `IOApp` 👉 [example](https://git.realestate.com.au/rca/commercial-depth-service/blob/master/src/main/scala/com/reagroup/rca/commercialdepthservice/Main.scala)
