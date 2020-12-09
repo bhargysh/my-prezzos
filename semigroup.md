@@ -54,17 +54,22 @@ Semigroup[Int].combine(1, Semigroup[Int].combine(2, 3))
   - `List`
   - `Set`
   - `Tuple`
-- Can everthing be solved with the cats implicits import? 🧠
 
 ---
 
-## New type
+## Question 🤔
+
+- Can we combine anything we want with the previous instances?
+
+---
+
+## A new type
 
 ```scala
 FruitInventory(total: Int) //value case class
 ```
 
-- Will there be a Semigroup instance for these case classes?
+- Will there be a Semigroup instance for this case class?
 
 ---
 
@@ -84,15 +89,15 @@ Semigroup[FruitInventory].combine(FruitInventory(11), FruitInventory(24))
 
 ---
 
-## What Semigroup is good for ⭐️
+## Semigroup is good when ⭐️
 
-- When we want to be able to combine types, i.e.
-  - when doing validation we want to combine all errors
-  - done by another type [Validated](https://typelevel.org/cats/datatypes/validated.html)
+- We want to be able to combine types
+  - e.g. when doing validation we want to combine all errors
+  - special [Validated](https://typelevel.org/cats/datatypes/validated.html) type class
 
 ---
 
-## Exploiting laws
+## Using the law ✅ 
 
 - must be associative
 - e.g. summing a `List[Int]` we can do
