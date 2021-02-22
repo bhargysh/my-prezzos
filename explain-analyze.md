@@ -1,6 +1,8 @@
-# Explaining Postgres DB
+# Analysing a Postgres DB 101
 
 ![](https://media.giphy.com/media/26gsccje7r5WUrXsA/giphy.gif)
+
+Note: talk about why I'm presenting about this, why it was interesting to me
 
 ---
 
@@ -13,17 +15,19 @@
 
 ## Use of postgres
 
-![search result for postgres in github](postgres-github-search.png)
+![search result for postgres in github](postgres_github_search.png)
 
 ![schitts creek shook](https://media1.giphy.com/media/l41YpJAQAI5fQTNyo/giphy.gif)
+
+Note: searched github to see how many results come up with running postgres instances
 
 ---
 
 ## Learning goals
 
-- Better understanding of how databases do (some) of their magic 🔮
-- Know which tools can help debug database performance issues
-- Bonus: refresher on some fun CS concepts
+1. Better understanding of how databases do (some) of their magic 🔮
+2. Know which tools can help debug database performance issues
+3. ⭐️ Bonus: refresher on some fun CS concepts ⭐️
 
 ---
 
@@ -33,25 +37,32 @@
 - Want to read from memory than from disk
     - _Caveat_: large datasets can't all be in memory
 
+Note: What other requirements can DBs have?
+
 ---
 
 ## Inside postgres
 
 - Postgres is implemented using a B-tree
-- self-balancing binary search tree
-- allows searches, sequential operations in `log` time
+- Self-balancing binary search tree
+- Allows searches, sequential operations in `log` time
+
+Note: Before we dive in to what tools we can use, let's talk about the contruction of a Postgres DB
 
 ---
 
-## Small CS digression
+## CS digression
 
 Btree
-- data structure that sorts itself
-- each node can have more than two children
-- ✅ helps reduce access to disk
-    - e.g. when a column is indexed in your search, postgres uses the index to access data on disk quicker
+- data structure that sorts itself 🔁
+- each node can have more than two children 🍂
+- helps reduce access to disk 💿
+
+Note: Can anyone tell me how it might do that? Through use of an idex. When a column is indexed in a search, postgres uses the index to access data on disk quicker
 
 ---
+
+## Btree visualisation
 
 ![](https://www.codeproject.com/KB/recipes/1158559/btree-figure1.png)
 
@@ -78,14 +89,16 @@ ORDER BY "modified_at", "id" LIMIT 1000;
 ```
 ---
 
-## What's happening under the hood? 👀
+## What magic is postgres doing? 👀
 Hold onto that...for a few mins
 
 ---
 
 ## Tool to use 🛠
 
-- _Query planner_ calculates the cumulative costs for each different execution strategy and chooses the most optimal plan (not always the lowest 'cost')
+- **Query planner**
+- Calculates the cumulative costs for different execution strategies
+    - then chooses the most optimal plan (not always the lowest 'cost')
 
 ---
 
@@ -93,10 +106,11 @@ Hold onto that...for a few mins
 | --- | --- |
 |`EXPLAIN`| - how the query planner _plans_ to execute the given query<br>- estimates time taken |
 |`EXPLAIN ANALYZE`| - query planner _executes_ the query<br> -  returns time spent on executing each part of the query |
+|`EXPLAIN BUFFERS`| - query planner shows info about cache hits/misses<br> -  returns time spent on I/O |
 
 ---
 
-## Analyse our query
+## Analyse the query
 
 ```sql
 explain analyze (SELECT id, data::text, modified_at
@@ -130,6 +144,9 @@ Limit  (cost=297.32..297.82 rows=200 width=44) (actual time=15.796..15.821 rows=
  Planning Time: 0.174 ms
  Execution Time: 15.876 ms
 ```
+
+Note: focus on the first two () on the first line and then look at the structure of the output. Notice the stepping pattern? We're going to discuss that soon.
+
 ---
 ## Cost of query
 
@@ -174,6 +191,8 @@ Limit
 
 ```
 
+Note: I've just simplified the structure of the execution strategy to make it more readable and to understand what is going on
+
 ---
 
 ## Digging deeper
@@ -187,11 +206,12 @@ Index Scan using idx_listings_modified_at_id on listings listings_1 -- 2nd query
 ```
 
 ---
+
 ## Bubble up 🧼
 
 - Result of the first index scan is passed up to `Append`
     - Append is used when rows need to be combined into a single result
-    - The query has `UNION` in it, which is why `Append` is used
+    - The query has `UNION` in it, so we can see why `Append` is used
 
 ---
 
@@ -204,7 +224,9 @@ Index Scan using idx_listings_modified_at_id on listings listings_1 -- 2nd query
 ---
 
 ## Bubble up x3
-- `Sort` includes info about the algorithm and whether it was done in memory or on disk and amount of memory needed
+- `Sort` includes info about the algorithm
+    - whether it was done in memory or on disk,
+    - and the amount of memory needed
 
 ```sql
 Sort Method: quicksort  Memory: 1783kB
@@ -219,7 +241,7 @@ Sort Method: quicksort  Memory: 1783kB
 
 ## A gotcha 🐵
 
-- _Same query_ can use an index during one run and use a sequential scan with a **filter** instead on a different run
+- _Same query_ can use an `Index Scan` during one execution or use a `Seq Scan` with a **filter** on a different execution
 - WHY? 🤔
 
 ---
@@ -239,4 +261,5 @@ Limit  (cost=297.32..297.82 rows=200 width=44) (actual time=15.796..15.821 rows=
 
 ---
 
+## 🎉 🎉 🎉
 ![schitts creek](https://media0.giphy.com/media/fVtcfEXWQJQUbsF1sH/giphy.gif)
