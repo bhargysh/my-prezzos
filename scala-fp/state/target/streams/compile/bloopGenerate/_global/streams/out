@@ -1,0 +1,4 @@
+[debug] [state] Classpath dependencies List()
+[debug] [state] Dependencies from configurations List()
+[debug] Bloop wrote the configuration of project 'state' to '/Users/bharg.sharma/Documents/Learning/ScalaPrezzos/state/.bloop/state.json'
+[success] Generated .bloop/state.json
