@@ -1,4 +1,4 @@
-# Analysing a Postgres DB 101
+## Postgres DB 101: Analysing queries
 
 ![](https://media.giphy.com/media/26gsccje7r5WUrXsA/giphy.gif)
 
@@ -27,7 +27,7 @@ Note: searched github to see how many results come up with running postgres inst
 
 1. Better understanding of how databases do (some) of their magic 🔮
 2. Know which tools can help debug database performance issues
-3. ⭐️ Bonus: refresher on some fun CS concepts ⭐️
+3. ⭐️ Bonus: a wee digression on a fun CS concept ⭐️
 
 ---
 
